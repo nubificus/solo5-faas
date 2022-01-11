@@ -1,0 +1,25 @@
+provider:
+  name: openfaas
+  gateway: http://192.168.8.117:31112
+
+functions:
+  echo-solo5:
+    skip_build: false
+    image: registry.nubificus.co.uk/ananos/solo5-faas:generic
+    #fprocess: "bash qemu_run.sh dog.png 1"
+    #annotations:
+    #  com.openfaas.profile: gpu
+    labels:
+      com.openfaas.scale.min: 50
+      com.openfaas.scale.max: 100
+      com.openfaas.scale.factor: 10
+    limits:
+      cpu: 10m
+    requests:
+      cpu: 10m
+      memory: 2Mi 
+    environment:
+      sleep_duration: 10
+      read_timeout: "5s"
+      write_timeout: "5s"
+      exec_timeout: "5s"
