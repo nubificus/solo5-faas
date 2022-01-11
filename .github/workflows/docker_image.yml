@@ -17,21 +17,18 @@ jobs:
       fail-fast: false
 
     steps:
-
     - uses: actions/checkout@v2
-    - name: Build the Docker image
-      run: |
-        docker build . --file Dockerfile --tag registry.nubificus.co.uk/ananos/solo5-faas:${{ matrix.arch }}
-        docker push registry.nubificus.co.uk/ananos/solo5-faas:${{ matrix.arch }}
-
-    - uses: docker/login-action@v1
-       with:
-          username: ${{ secrets.NBFC_USERNAME }}
-          password: ${{ secrets.NBFC_PASSWORD }}
-      run: |
-        docker push registry.nubificus.co.uk/ananos/solo5-faas:${{ matrix.arch }}
-
-
+    - name: Publish to Registry
+      uses: elgohr/Publish-Docker-Github-Action@3.04
+      env:
+        ARCH: ${{ matrix.arch }}
+      with:
+        name: registry.nubificus.co.uk/ananos/solo5-faas
+        registry: registry.nubificus.co.uk
+        username: ${{ secrets.NBFC_USERNAME }}
+        password: ${{ secrets.NBFC_PASSWORD }}
+        buildargs: ARCH
+        tags: ARCH
 
   create_manifest:
     runs-on: [self-hosted]
@@ -40,12 +37,13 @@ jobs:
     steps:
       - uses: docker/login-action@v1
         with:
+          registry: registry.nubificus.co.uk
           username: ${{ secrets.NBFC_USERNAME }}
           password: ${{ secrets.NBFC_PASSWORD }}
 
       - name: Create manifest
         run: |
             docker manifest create registry.nubificus.co.uk/ananos/solo5-faas:generic \
-            --amend registry.nubificus.co.uk/ananos/solo5-faas:aarch64
+            --amend registry.nubificus.co.uk/ananos/solo5-faas:aarch64 \
             --amend registry.nubificus.co.uk/ananos/solo5-faas:x86_64
             docker manifest push registry.nubificus.co.uk/ananos/solo5-faas:generic
