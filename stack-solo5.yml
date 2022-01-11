@@ -6,7 +6,6 @@ functions:
   echo-solo5:
     skip_build: false
     image: registry.nubificus.co.uk/ananos/solo5-faas:generic
-    #fprocess: "bash qemu_run.sh dog.png 1"
     #annotations:
     #  com.openfaas.profile: gpu
     labels:
