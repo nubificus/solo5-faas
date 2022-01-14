@@ -10,6 +10,9 @@ RUN git clone https://github.com/solo5/solo5
 
 WORKDIR /solo5
 
+COPY solo5-arch-print.patch /solo5/solo5-arch-print.patch
+RUN patch -p1 < solo5-arch-print.patch
+
 RUN ./configure.sh && make
 # build a static solo5-hvt binary
 

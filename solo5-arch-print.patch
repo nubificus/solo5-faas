@@ -1,0 +1,104 @@
+diff --git a/tests/test_hello/test_hello.c b/tests/test_hello/test_hello.c
+index 059eb2a..4435fcc 100644
+--- a/tests/test_hello/test_hello.c
++++ b/tests/test_hello/test_hello.c
+@@ -18,8 +18,83 @@
+  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+  */
+ 
++#include <stdarg.h>
++#include <stddef.h>
+ #include "solo5.h"
+ #include "../../bindings/lib.c"
++#include "../../bindings/printf.c"
++
++    const char *getBuild() { //Get current architecture, detectx nearly every architecture. Coded by Freak
++        #if defined(__x86_64__) || defined(_M_X64)
++        return "x86_64";
++        #elif defined(i386) || defined(__i386__) || defined(__i386) || defined(_M_IX86)
++        return "x86_32";
++        #elif defined(__ARM_ARCH_2__)
++        return "ARM2";
++        #elif defined(__ARM_ARCH_3__) || defined(__ARM_ARCH_3M__)
++        return "ARM3";
++        #elif defined(__ARM_ARCH_4T__) || defined(__TARGET_ARM_4T)
++        return "ARM4T";
++        #elif defined(__ARM_ARCH_5_) || defined(__ARM_ARCH_5E_)
++        return "ARM5"
++        #elif defined(__ARM_ARCH_6T2_) || defined(__ARM_ARCH_6T2_)
++        return "ARM6T2";
++        #elif defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_6J__) || defined(__ARM_ARCH_6K__) || defined(__ARM_ARCH_6Z__) || defined(__ARM_ARCH_6ZK__)
++        return "ARM6";
++        #elif defined(__ARM_ARCH_7__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7R__) || defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7S__)
++        return "ARM7";
++        #elif defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7R__) || defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7S__)
++        return "ARM7A";
++        #elif defined(__ARM_ARCH_7R__) || defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7S__)
++        return "ARM7R";
++        #elif defined(__ARM_ARCH_7M__)
++        return "ARM7M";
++        #elif defined(__ARM_ARCH_7S__)
++        return "ARM7S";
++        #elif defined(__aarch64__) || defined(_M_ARM64)
++        return "ARM64";
++        #elif defined(mips) || defined(__mips__) || defined(__mips)
++        return "MIPS";
++        #elif defined(__sh__)
++        return "SUPERH";
++        #elif defined(__powerpc) || defined(__powerpc__) || defined(__powerpc64__) || defined(__POWERPC__) || defined(__ppc__) || defined(__PPC__) || defined(_ARCH_PPC)
++        return "POWERPC";
++        #elif defined(__PPC64__) || defined(__ppc64__) || defined(_ARCH_PPC64)
++        return "POWERPC64";
++        #elif defined(__sparc__) || defined(__sparc)
++        return "SPARC";
++        #elif defined(__m68k__)
++        return "M68K";
++        #else
++        return "UNKNOWN";
++        #endif
++    }
++
++
++
++static void printf(const char *fmt, ...)
++    __attribute__ ((format (printf, 1, 2)));
++
++static void printf(const char *fmt, ...)
++{
++    char buffer[1024];
++    va_list args;
++    size_t size;
++
++    va_start(args, fmt);
++    size = vsnprintf(buffer, sizeof buffer, fmt, args);
++    va_end(args);
++
++    if (size >= sizeof buffer) {
++        const char trunc[] = "(truncated)\n";
++        solo5_console_write(buffer, sizeof buffer - 1);
++        solo5_console_write(trunc, sizeof trunc - 1);
++    }
++    else {
++        solo5_console_write(buffer, size);
++    }
++}
++
+ 
+ static void puts(const char *s)
+ {
+@@ -29,7 +104,7 @@ static void puts(const char *s)
+ int solo5_app_main(const struct solo5_start_info *si)
+ {
+     puts("\n**** Solo5 standalone test_hello ****\n\n");
+-    puts("Hello, World\nCommand line is: '");
++    puts("Command line is: '");
+ 
+     size_t len = 0;
+     const char *p = si->cmdline;
+@@ -44,5 +119,6 @@ int solo5_app_main(const struct solo5_start_info *si)
+     if (strcmp(si->cmdline, "Hello_Solo5") == 0)
+         puts("SUCCESS\n");
+ 
++    printf("running on %s\n", getBuild());
+     return SOLO5_EXIT_SUCCESS;
+ }
