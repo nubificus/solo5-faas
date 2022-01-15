@@ -43,6 +43,7 @@ jobs:
 
       - name: Create manifest
         run: |
+            docker manifest rm registry.nubificus.co.uk/ananos/solo5-faas:generic
             docker manifest create registry.nubificus.co.uk/ananos/solo5-faas:generic \
             --amend registry.nubificus.co.uk/ananos/solo5-faas:aarch64 \
             --amend registry.nubificus.co.uk/ananos/solo5-faas:x86_64

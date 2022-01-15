@@ -6,10 +6,10 @@ functions:
   echo-solo5:
     skip_build: false
     image: registry.nubificus.co.uk/ananos/solo5-faas:generic
-    #annotations:
-    #  com.openfaas.profile: gpu
+    annotations:
+      com.openfaas.profile: eachnode
     labels:
-      com.openfaas.scale.min: 50
+      com.openfaas.scale.min: 4
       com.openfaas.scale.max: 100
       com.openfaas.scale.factor: 10
     limits:
