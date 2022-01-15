@@ -1,0 +1,24 @@
+kind: Profile
+apiVersion: openfaas.com/v1
+metadata:
+  name: eachnode
+  namespace: openfaas
+spec:
+    affinity:
+      podAntiAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+              - key: faas_function
+                operator: In
+                values:
+                - echo-solo5
+          topologyKey: "kubernetes.io/hostname"
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: fosdem
+                operator: In
+                values:
+                - istrue

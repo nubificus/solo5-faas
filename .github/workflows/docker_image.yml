@@ -23,12 +23,12 @@ jobs:
       env:
         ARCH: ${{ matrix.arch }}
       with:
-        name: registry.nubificus.co.uk/ananos/solo5-faas
+        name: ananos/solo5-echo-faas
         registry: registry.nubificus.co.uk
         username: ${{ secrets.NBFC_USERNAME }}
         password: ${{ secrets.NBFC_PASSWORD }}
         buildargs: ARCH
-        tags: ARCH
+        tags: ${{ matrix.arch }}
 
   create_manifest:
     runs-on: [self-hosted]
@@ -43,7 +43,8 @@ jobs:
 
       - name: Create manifest
         run: |
-            docker manifest create registry.nubificus.co.uk/ananos/solo5-faas:generic \
-            --amend registry.nubificus.co.uk/ananos/solo5-faas:aarch64 \
-            --amend registry.nubificus.co.uk/ananos/solo5-faas:x86_64
-            docker manifest push registry.nubificus.co.uk/ananos/solo5-faas:generic
+            #docker manifest rm registry.nubificus.co.uk/ananos/solo5-echo-faas:generic
+            docker manifest create registry.nubificus.co.uk/ananos/solo5-echo-faas:generic \
+            --amend registry.nubificus.co.uk/ananos/solo5-echo-faas:aarch64 \
+            --amend registry.nubificus.co.uk/ananos/solo5-echo-faas:x86_64
+            docker manifest push registry.nubificus.co.uk/ananos/solo5-echo-faas:generic
